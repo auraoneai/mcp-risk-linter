@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mcp-risk-linter"
 version = "0.1.6"
-description = "Statically lint MCP server source and docs for capability, permission, and disclosure risks."
+description = "Offline MCP server security linter: statically scan MCP server source and docs for capability, permission, and disclosure risks."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -17,6 +17,8 @@ keywords = [
   "sarif",
   "security",
   "static-analysis",
+  "mcp security linter",
+  "mcp server security",
 ]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -33,7 +35,7 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://auraone.ai/open"
+Homepage = "https://auraone.ai/open/mcp-risk-linter"
 Source = "https://github.com/auraoneai/mcp-risk-linter"
 Issues = "https://github.com/auraoneai/mcp-risk-linter/issues"
 Documentation = "https://github.com/auraoneai/mcp-risk-linter#readme"
