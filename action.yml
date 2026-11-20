@@ -1,5 +1,5 @@
 name: Lint MCP Server Risk
-description: Statically scan MCP server source and docs for capability, permission, and disclosure risks.
+description: Offline MCP server security linter. Statically scans MCP server source and docs for capability and permission risks.
 author: AuraOne
 branding:
   icon: shield

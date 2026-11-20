@@ -1,8 +1,51 @@
 # mcp-risk-linter
 
-`mcp-risk-linter` statically scans a Model Context Protocol server repository
-for capability, permission, secret-handling, and disclosure risks before human
-review or installation.
+Offline MCP server security linter.
+
+[![PyPI](https://img.shields.io/pypi/v/mcp-risk-linter)](https://pypi.org/project/mcp-risk-linter/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/auraoneai/mcp-risk-linter/blob/main/LICENSE)
+
+## Verified Quickstart
+
+```bash
+python -m pip install "mcp-risk-linter==0.1.6"
+# from a source checkout (fixtures live in examples/)
+mcp-risk-linter scan examples/safe_server --format json --fail-on high
+```
+
+```json
+{
+  "counts": {},
+  "finding_count": 0,
+  "findings": [],
+  "root": "/path/to/mcp-risk-linter/examples/safe_server",
+  "tools": [
+    {
+      "description": "Reads the local synthetic project summary metadata without writing files or calling external services.",
+      "name": "read_project_summary",
+      "source": "server.json"
+    },
+    {
+      "description": "Lists static labels bundled with this synthetic fixture and has no side effects.",
+      "name": "list_fixture_labels",
+      "source": "server.json"
+    }
+  ]
+}
+```
+
+The command exits `0`; `root` shows the absolute path on your machine. Add `--out /tmp/mcp-risk-report.json` to write the
+report to a file. The `risky_stdio_server` and `broad_filesystem_server`
+fixtures intentionally exercise findings and can return exit code `1` at the
+`high` threshold.
+
+## Install
+
+```bash
+python -m pip install "mcp-risk-linter==0.1.6"
+```
+
+The CLI has no runtime dependencies and requires Python 3.10 or newer.
 
 ## At a Glance
 
@@ -13,26 +56,30 @@ review or installation.
 | Differentiator | Scans source, JSON metadata, and docs without starting the MCP server. |
 | Produces | Discovered tool inventory plus Markdown, JSON, or SARIF findings with remediation. |
 
-## Install
+`mcp-risk-linter` statically scans a Model Context Protocol server repository
+for capability, permission, secret-handling, and disclosure risks before human
+review or installation.
 
-```bash
-python -m pip install "mcp-risk-linter==0.1.6"
-```
+## What It Does and Doesn't Do
 
-## Verified Quickstart
+It does:
 
-Run from a source checkout:
+- run static analysis only: regex and metadata rules over source, JSON, and
+  docs, without starting the MCP server or making network requests;
+- list discovered tools and report findings as Markdown, JSON, or SARIF;
+- fail a CI job at a severity threshold you choose.
 
-```bash
-mcp-risk-linter scan examples/safe_server \
-  --format json \
-  --out /tmp/mcp-risk-report.json \
-  --fail-on high
-```
+It doesn't:
 
-The bundled safe fixture discovers two tools and returns no findings. The
-`risky_stdio_server` and `broad_filesystem_server` fixtures intentionally
-exercise findings and can return exit code `1` at the default `high` threshold.
+- perform a full security audit, penetration test, CVE scan, or exploit
+  detection;
+- see runtime-only permissions, dynamic dispatch, or network behavior that is
+  not in checked-in source and docs;
+- prove a vulnerability. A finding is a review prompt.
+
+When adopting it on an existing server, start with `--fail-on none` (or
+`fail-on: none` in the Action) to review findings without failing the build,
+then raise the threshold.
 
 ## What It Checks
 
@@ -60,6 +107,9 @@ The published Action should be pinned to its immutable release commit:
     format: markdown
     output: mcp-risk-report.md
 ```
+
+To adopt it without failing existing builds, start with `fail-on: none` and
+raise the threshold after reviewing the first report.
 
 See [`docs/github-action.md`](docs/github-action.md) for the complete workflow,
 permissions, job-summary behavior, and optional pull request comments.
@@ -107,3 +157,16 @@ Verified on 2026-07-13:
 
 Scan one MCP server before installation, review every high-severity finding with
 the maintainer, and add only narrowly justified suppressions.
+
+## Part of the AuraOne Agent Reliability Workflow
+
+- [tool-call-replay](https://auraone.ai/open/tool-call-replay): turn a recorded
+  agent failure into a pytest regression.
+- [Agent Studio Open](https://auraone.ai/open/agent-studio-open): debug, replay,
+  and compare MCP and A2A agent traces.
+- [mcp-risk-linter](https://auraone.ai/open/mcp-risk-linter): offline MCP
+  server security linter.
+- [a2a-contract-test](https://auraone.ai/open/a2a-contract-test): A2A agent
+  card validator and contract tests.
+
+See related agent evaluation and reliability workflows. [Talk to AuraOne](https://auraone.ai/contact?from=open:mcp-risk-linter)
